@@ -4,11 +4,25 @@
 
 Use two services in the same Railway project and environment:
 
-1. **open-seo**: use the root `railway.json`, set `AUTH_MODE=local_noauth`
+For newly created Railway services, configure the settings below in the
+dashboard. Railway no longer allows new services to opt into legacy Config as
+Code. The `railway.json` files remain references for older services that already
+use that feature.
+
+| Setting                            | open-seo                    | open-seo-gateway                    |
+| ---------------------------------- | --------------------------- | ----------------------------------- |
+| `RAILWAY_DOCKERFILE_PATH` variable | `deploy/railway/Dockerfile` | `deploy/railway/gateway/Dockerfile` |
+| Healthcheck Path                   | `/api/health`               | `/healthz`                          |
+| Healthcheck Timeout                | `600`                       | `120`                               |
+| Replicas                           | `1`                         | `1`                                 |
+| Restart policy                     | On Failure, 3 retries       | On Failure, 3 retries               |
+| Serverless                         | Disabled                    | Disabled                            |
+
+1. **open-seo**: apply the settings above, set `AUTH_MODE=local_noauth`
    and `PORT=3001`, attach a volume at `/app/.wrangler`, and leave public
    networking disabled (no public domain or TCP proxy).
-2. **open-seo-gateway**: use the same repository, with Railway Config File set
-   to `/deploy/railway/gateway/railway.json`. Keep the source root at `/`.
+2. **open-seo-gateway**: use the same repository and its settings above.
+   Keep the source root at `/`.
    Generate a Railway HTTPS domain only on this service, targeting port 8080.
 3. Set gateway variables `PORT=8080`, `OPENSEO_UPSTREAM=open-seo.railway.internal:3001`
    (use the actual private hostname shown by Railway), `BASIC_AUTH_USER`, and
@@ -27,8 +41,9 @@ browser-oriented Basic Auth gateway. Keep both services running (no sleeping).
 
 ## Cloudflare Access with your own domain
 
-Deploy from the repository root. `railway.json` selects this directory's
-Dockerfile, `/api/health`, a 600-second startup timeout, and one replica.
+Deploy from the repository root with the `open-seo` settings above.
+For legacy Config as Code services, the root `railway.json` contains the same
+Dockerfile, `/api/health`, 600-second startup timeout, and one-replica settings.
 The app builds in the image build phase, before the runtime memory limit applies.
 Leave Railway's build and start command overrides empty.
 
