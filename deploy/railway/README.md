@@ -4,12 +4,10 @@
 
 Use two services in the same Railway project and environment:
 
-Configure the settings below in the dashboard. If Railway reads Config as Code,
-its values override dashboard settings and the Dockerfile-path variable. Set
-the gateway's Railway Config File to `/deploy/railway/gateway/railway.json`;
-otherwise it can inherit the app's root `railway.json` and build the wrong image.
-Railway marks Config as Code as deprecated, so also keep the dashboard settings
-aligned with these files.
+Configure the settings below in the dashboard. There is deliberately no root
+`railway.json`: a shared root config can override the Dockerfile-path variable
+and make the gateway build the app image. Railway marks Config as Code as
+deprecated; use the dashboard settings for both services.
 
 | Setting                            | open-seo                    | open-seo-gateway                    |
 | ---------------------------------- | --------------------------- | ----------------------------------- |
@@ -24,8 +22,7 @@ aligned with these files.
    and `PORT=3001`, attach a volume at `/app/.wrangler`, and leave public
    networking disabled (no public domain or TCP proxy).
 2. **open-seo-gateway**: use the same repository and its settings above.
-   Keep the source root at `/` and set Railway Config File to
-   `/deploy/railway/gateway/railway.json` when Config as Code is active.
+   Keep the source root at `/` and leave Railway Config File unset.
    Generate a Railway HTTPS domain only on this service, targeting port 8080.
 3. Set gateway variables `PORT=8080`, `OPENSEO_UPSTREAM=open-seo.railway.internal:3001`
    (use the actual private hostname shown by Railway), `BASIC_AUTH_USER`, and
@@ -45,7 +42,7 @@ browser-oriented Basic Auth gateway. Keep both services running (no sleeping).
 ## Cloudflare Access with your own domain
 
 Deploy from the repository root with the `open-seo` settings above.
-For legacy Config as Code services, the root `railway.json` contains the same
+For legacy Config as Code services, `deploy/railway/railway.example.json` contains the same
 Dockerfile, `/api/health`, 600-second startup timeout, and one-replica settings.
 The app builds in the image build phase, before the runtime memory limit applies.
 Leave Railway's build and start command overrides empty.
