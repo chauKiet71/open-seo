@@ -20,7 +20,8 @@ ENV VITE_SHOW_DEVTOOLS=false
 ENV CLOUDFLARE_INCLUDE_PROCESS_ENV=true
 RUN case "$AUTH_MODE" in cloudflare_access|local_noauth) ;; *) exit 1 ;; esac \
     && pnpm run build \
-    && printf '%s' "$AUTH_MODE" > /app/.railway-build-auth-mode
+    && printf '%s' "$AUTH_MODE" > /app/.railway-build-auth-mode \
+    && cp /app/.wrangler/deploy/config.json /app/.railway-deploy-config.json
 
 # Vite exports build-time process.env into these files. Wrangler prioritizes
 # .dev.vars over runtime process.env, which would hide Railway's runtime keys.

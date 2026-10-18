@@ -8,5 +8,8 @@ fi
 
 pnpm exec tsx scripts/selfhost-preflight.ts
 # Railway mounts /app/.wrangler at runtime, not during build or pre-deploy.
+# Restore build metadata hidden by the volume; keep database state intact.
+mkdir -p /app/.wrangler/deploy
+cp /app/.railway-deploy-config.json /app/.wrangler/deploy/config.json
 pnpm run db:migrate:local
 exec node scripts/selfhost-scheduler.mjs
