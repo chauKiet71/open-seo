@@ -4,10 +4,12 @@
 
 Use two services in the same Railway project and environment:
 
-For newly created Railway services, configure the settings below in the
-dashboard. Railway no longer allows new services to opt into legacy Config as
-Code. The `railway.json` files remain references for older services that already
-use that feature.
+Configure the settings below in the dashboard. If Railway reads Config as Code,
+its values override dashboard settings and the Dockerfile-path variable. Set
+the gateway's Railway Config File to `/deploy/railway/gateway/railway.json`;
+otherwise it can inherit the app's root `railway.json` and build the wrong image.
+Railway marks Config as Code as deprecated, so also keep the dashboard settings
+aligned with these files.
 
 | Setting                            | open-seo                    | open-seo-gateway                    |
 | ---------------------------------- | --------------------------- | ----------------------------------- |
@@ -22,7 +24,8 @@ use that feature.
    and `PORT=3001`, attach a volume at `/app/.wrangler`, and leave public
    networking disabled (no public domain or TCP proxy).
 2. **open-seo-gateway**: use the same repository and its settings above.
-   Keep the source root at `/`.
+   Keep the source root at `/` and set Railway Config File to
+   `/deploy/railway/gateway/railway.json` when Config as Code is active.
    Generate a Railway HTTPS domain only on this service, targeting port 8080.
 3. Set gateway variables `PORT=8080`, `OPENSEO_UPSTREAM=open-seo.railway.internal:3001`
    (use the actual private hostname shown by Railway), `BASIC_AUTH_USER`, and
