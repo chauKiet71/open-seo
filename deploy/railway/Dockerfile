@@ -22,5 +22,9 @@ RUN case "$AUTH_MODE" in cloudflare_access|local_noauth) ;; *) exit 1 ;; esac \
     && pnpm run build \
     && printf '%s' "$AUTH_MODE" > /app/.railway-build-auth-mode
 
+# Vite exports build-time process.env into these files. Wrangler prioritizes
+# .dev.vars over runtime process.env, which would hide Railway's runtime keys.
+RUN rm -f /app/dist/server/.dev.vars /app/dist/open_seo_audit/.dev.vars
+
 EXPOSE 3001
 CMD ["sh", "deploy/railway/start.sh"]
