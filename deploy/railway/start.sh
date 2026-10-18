@@ -12,4 +12,6 @@ pnpm exec tsx scripts/selfhost-preflight.ts
 mkdir -p /app/.wrangler/deploy
 cp /app/.railway-deploy-config.json /app/.wrangler/deploy/config.json
 pnpm run db:migrate:local
+# Runtime variables must win even if tooling restores build-time .dev.vars.
+rm -f /app/dist/server/.dev.vars /app/dist/open_seo_audit/.dev.vars
 exec node scripts/selfhost-scheduler.mjs
