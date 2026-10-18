@@ -1,0 +1,6 @@
+**
+!deploy/
+!deploy/railway/
+!deploy/railway/gateway/
+!deploy/railway/gateway/Caddyfile
+!deploy/railway/gateway/start.sh

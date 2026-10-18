@@ -41,6 +41,8 @@ export default defineConfig(({ mode, command }) => {
   const showDevtools = env.VITE_SHOW_DEVTOOLS !== "false";
   const allowedHosts = [
     env.ALLOWED_HOST,
+    // Railway probes preview with this Host header rather than the app domain.
+    ...(env.RAILWAY_ENVIRONMENT_ID ? ["healthcheck.railway.app"] : []),
     env.BETTER_AUTH_URL ? new URL(env.BETTER_AUTH_URL).hostname : undefined,
   ].filter((host): host is string => Boolean(host));
   const emitSourcemaps = env.POSTHOG_SOURCEMAPS === "true";

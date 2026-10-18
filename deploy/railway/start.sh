@@ -1,0 +1,12 @@
+#!/bin/sh
+set -eu
+
+if [ "$AUTH_MODE" != "$(cat /app/.railway-build-auth-mode)" ]; then
+  echo 'AUTH_MODE changed after the image was built. Rebuild the Railway service.' >&2
+  exit 1
+fi
+
+pnpm exec tsx scripts/selfhost-preflight.ts
+# Railway mounts /app/.wrangler at runtime, not during build or pre-deploy.
+pnpm run db:migrate:local
+exec node scripts/selfhost-scheduler.mjs

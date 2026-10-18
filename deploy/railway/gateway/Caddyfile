@@ -1,0 +1,23 @@
+{
+	admin off
+	auto_https off
+}
+
+:{$PORT:8080} {
+	# Readiness only; no app data is exposed through this endpoint.
+	handle /healthz {
+		respond "ok" 200
+	}
+
+	handle {
+		basic_auth {
+			{env.BASIC_AUTH_USER} {env.BASIC_AUTH_HASH}
+		}
+		reverse_proxy {$OPENSEO_UPSTREAM} {
+			# Railway terminates public HTTPS before forwarding to this service.
+			header_up X-Forwarded-Proto https
+			# The application does not need the gateway's login credentials.
+			header_up -Authorization
+		}
+	}
+}
